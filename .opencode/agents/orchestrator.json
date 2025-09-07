@@ -1,0 +1,203 @@
+{
+  "version": "1.0.0",
+  "parallelExecution": {
+    "enabled": true,
+    "maxConcurrentAgents": 3,
+    "taskQueuePath": "../tasks/queue.json",
+    "resourceAllocation": {
+      "strategy": "dynamic",
+      "constraints": {
+        "maxMemoryPerAgent": "2GB",
+        "maxTokensPerAgent": 8000,
+        "maxExecutionTime": 300000
+      }
+    }
+  },
+  "agentProfiles": {
+    "primary": {
+      "model": "anthropic/claude-3-opus",
+      "maxTokens": 200000,
+      "capabilities": [
+        "architecture",
+        "complex-reasoning",
+        "code-generation",
+        "review"
+      ],
+      "mcpServers": [
+        "sequential-thinking",
+        "context7",
+        "perplexity-ask",
+        "playwright",
+        "drizzle"
+      ],
+      "priority": 1,
+      "contextWindow": 8000
+    },
+    "thinking": {
+      "model": "openai/gpt-4-turbo-preview",
+      "maxTokens": 8000,
+      "reasoningEffort": "high",
+      "capabilities": [
+        "problem-decomposition",
+        "root-cause-analysis",
+        "planning",
+        "validation"
+      ],
+      "mcpServers": [
+        "sequential-thinking",
+        "perplexity-ask"
+      ],
+      "priority": 2,
+      "contextWindow": 6000
+    },
+    "task": {
+      "model": "openai/gpt-4-turbo-preview",
+      "maxTokens": 8000,
+      "reasoningEffort": "high",
+      "capabilities": [
+        "implementation",
+        "testing",
+        "integration",
+        "optimization"
+      ],
+      "mcpServers": [
+        "task-master-ai",
+        "playwright",
+        "drizzle",
+        "plane"
+      ],
+      "priority": 3,
+      "contextWindow": 4000
+    },
+    "fast": {
+      "model": "anthropic/claude-3.5-sonnet",
+      "maxTokens": 1000000,
+      "capabilities": [
+        "quick-response",
+        "status-check",
+        "simple-operations",
+        "clarification"
+      ],
+      "mcpServers": [
+        "claude-historian"
+      ],
+      "priority": 4,
+      "contextWindow": 2000
+    }
+  },
+  "taskDistribution": {
+    "rules": [
+      {
+        "taskType": "architecture",
+        "preferredAgent": "primary",
+        "fallbackAgent": "thinking"
+      },
+      {
+        "taskType": "bug-fix",
+        "preferredAgent": "task",
+        "fallbackAgent": "primary"
+      },
+      {
+        "taskType": "testing",
+        "preferredAgent": "task",
+        "fallbackAgent": null,
+        "requiresIsolation": true
+      },
+      {
+        "taskType": "documentation",
+        "preferredAgent": "fast",
+        "fallbackAgent": "primary"
+      },
+      {
+        "taskType": "research",
+        "preferredAgent": "thinking",
+        "fallbackAgent": "primary"
+      }
+    ],
+    "loadBalancing": {
+      "algorithm": "round-robin",
+      "healthCheckInterval": 5000,
+      "failoverTimeout": 30000
+    }
+  },
+  "conflictResolution": {
+    "strategy": "last-write-wins",
+    "mergeConflicts": {
+      "enabled": true,
+      "autoResolve": false,
+      "notifyOnConflict": true
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "enabled": true,
+      "interval": 10000,
+      "export": ".opencode/metrics/"
+    },
+    "logging": {
+      "level": "info",
+      "destination": ".opencode/logs/",
+      "rotation": "daily",
+      "retention": 7
+    },
+    "alerts": {
+      "tokenUsageThreshold": 0.8,
+      "memoryUsageThreshold": 0.9,
+      "errorRateThreshold": 0.1
+    }
+  },
+  "browserPool": {
+    "playwright": {
+      "maxInstances": 5,
+      "isolation": true,
+      "flags": ["--isolated", "--headless"],
+      "storagePrefix": "../browser-sessions/",
+      "sessionTimeout": 300000,
+      "viewports": {
+        "desktop": {
+          "width": 1920,
+          "height": 1080
+        },
+        "mobile": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "recycleAfter": 10,
+      "cleanupOnExit": true
+    }
+  },
+  "contextManagement": {
+    "store": "../context/",
+    "ttl": 86400,
+    "compression": true,
+    "pruning": {
+      "enabled": true,
+      "interval": 3600000,
+      "strategy": "lru"
+    },
+    "sharing": {
+      "protocol": "explicit-handoff",
+      "includeMetadata": true,
+      "verifyIntegrity": true
+    }
+  },
+  "safety": {
+    "preflightChecks": [
+      "verify-branch",
+      "check-uncommitted",
+      "validate-servers",
+      "confirm-resources"
+    ],
+    "runtime": {
+      "sandboxing": true,
+      "resourceLimits": true,
+      "auditLogging": true
+    },
+    "rollback": {
+      "enabled": true,
+      "checkpointInterval": 60000,
+      "maxCheckpoints": 5
+    }
+  }
+}

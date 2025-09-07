@@ -1,0 +1,67 @@
+{
+  "agentId": "task",
+  "name": "Task Execution Agent",
+  "model": {
+    "provider": "openrouter",
+    "id": "openai/gpt-5",
+    "maxTokens": 8000,
+    "temperature": 0.5,
+    "reasoningEffort": "high"
+  },
+  "capabilities": [
+    "implementation",
+    "bug-fixing",
+    "testing",
+    "integration",
+    "database-operations",
+    "api-development"
+  ],
+  "mcpServers": {
+    "enabled": [
+      "task-master-ai",
+      "playwright",
+      "drizzle",
+      "plane",
+      "claude-historian"
+    ],
+    "priority": {
+      "task-master-ai": 1,
+      "playwright": 1,
+      "drizzle": 2,
+      "plane": 3,
+      "claude-historian": 3
+    }
+  },
+  "context": {
+    "maxTokens": 4000,
+    "preservationStrategy": "recent",
+    "compressionThreshold": 3000
+  },
+  "execution": {
+    "timeout": 180000,
+    "retries": 3,
+    "priority": 3,
+    "parallel": {
+      "enabled": true,
+      "maxConcurrent": 3
+    }
+  },
+  "triggers": {
+    "taskTypes": [
+      "implementation",
+      "bug-fix",
+      "testing",
+      "integration",
+      "migration"
+    ],
+    "complexity": {
+      "min": 3,
+      "max": 7
+    }
+  },
+  "artifacts": {
+    "outputPath": ".opencode/artifacts/task/",
+    "formats": ["js", "ts", "json", "test"],
+    "retention": 259200000
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "agentId": "primary",
+  "name": "Primary Architecture Agent",
+  "model": {
+    "provider": "openrouter",
+    "id": "anthropic.claude-opus-4-1-20250805",
+    "maxTokens": 200000,
+    "temperature": 0.7,
+    "topP": 0.95
+  },
+  "capabilities": [
+    "architecture-design",
+    "complex-reasoning",
+    "code-generation",
+    "code-review",
+    "performance-optimization",
+    "security-audit",
+    "documentation"
+  ],
+  "mcpServers": {
+    "enabled": [
+      "sequential-thinking",
+      "context7",
+      "perplexity-ask",
+      "playwright",
+      "drizzle",
+      "task-master-ai"
+    ],
+    "priority": {
+      "sequential-thinking": 1,
+      "context7": 1,
+      "perplexity-ask": 2,
+      "playwright": 2,
+      "drizzle": 2,
+      "task-master-ai": 1
+    }
+  },
+  "context": {
+    "maxTokens": 8000,
+    "preservationStrategy": "selective",
+    "compressionThreshold": 6000
+  },
+  "execution": {
+    "timeout": 300000,
+    "retries": 2,
+    "priority": 1
+  },
+  "triggers": {
+    "taskTypes": [
+      "architecture",
+      "system-design",
+      "refactoring",
+      "optimization",
+      "security",
+      "code-review"
+    ],
+    "complexity": {
+      "min": 7,
+      "max": 10
+    }
+  },
+  "artifacts": {
+    "outputPath": ".opencode/artifacts/primary/",
+    "formats": ["md", "json", "typescript", "sql"],
+    "retention": 604800000
+  }
+}
